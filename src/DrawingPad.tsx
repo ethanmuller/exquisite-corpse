@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react"
 
 export default function(props) {
     const [ circles, setCircles ] = useState<any[]>(JSON.parse(localStorage.getItem('circles') || '[]'))
-    const cnv = useRef<HTMLCanvasElement>(null)
+    const canvasRef = useRef<HTMLCanvasElement>(null)
 
     function clear() {
       setCircles([])
@@ -20,38 +20,46 @@ export default function(props) {
     }, [circles])
 
     useEffect(() => {
-      const ctx = cnv.current?.getContext('2d');
-      const ratio = window.devicePixelRatio;
-      cnv.current.width = props.width * ratio
-      cnv.current.height = props.height * ratio
-      cnv.current.style.width = props.width + 'px'
-      cnv.current.style.height = props.height + 'px'
-      ctx.scale(ratio, ratio)
+      const canvas = canvasRef.current
+      const ctx = canvas?.getContext('2d');
+      const ratio = window.devicePixelRatio || 1;
+      if (canvas) {
+        canvas.width = props.width * ratio
+        canvas.height = props.height * ratio
+        canvas.style.width = props.width + 'px'
+        canvas.style.height = props.height + 'px'
+      }
+      ctx?.scale(ratio, ratio)
     }, [])
 
     useEffect(() => {
-      const ctx = cnv.current?.getContext('2d');
-      ctx.clearRect(0, 0, cnv.current.width, cnv.current.height);
-
-      ctx.fillStyle = '#000000';
-      for (let i = 0; i < circles.length; i++) {
-        ctx.beginPath();
-        ctx.arc(circles[i][0], circles[i][1], 2, 0, 2 * Math.PI);
-        ctx.fill();
+      const canvas = canvasRef.current
+      const ctx = canvas?.getContext('2d');
+      if (canvas && ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#000000';
+        for (let i = 0; i < circles.length; i++) {
+          ctx.beginPath();
+          ctx.arc(circles[i][0], circles[i][1], 2, 0, 2 * Math.PI);
+          ctx.fill();
+        }
       }
     }, [circles]);
 
     useEffect(() => {
-        cnv.current?.addEventListener('pointerdown', handlePointerDown)
+        const canvas = canvasRef.current
+        if (canvas) {
+          canvas.addEventListener('pointerdown', handlePointerDown)
 
-        return () => {
-            cnv.current?.removeEventListener('pointerdown', handlePointerDown)
+          return () => {
+            canvas.removeEventListener('pointerdown', handlePointerDown)
+          }
         }
     })
 
     return (
         <>
-        <canvas style={{touchAction: 'none'}} ref={cnv} {...props}></canvas>
+        <canvas style={{touchAction: 'none'}} ref={canvasRef} {...props}></canvas>
         <div><button onClick={clear}>clear</button></div>
         </>
     )
