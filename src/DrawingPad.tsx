@@ -1,18 +1,18 @@
 import { useEffect, useState, useRef } from "react"
 
 export default function(props) {
-  const [ circles, setCircles ] = useState<any[]>(JSON.parse(localStorage.getItem('circles') || '[]'))
+  const [ strokes, setStrokes ] = useState<any[]>(JSON.parse(localStorage.getItem('strokes') || '[]'))
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   function clear() {
-    setCircles([])
+    setStrokes([])
   }
 
   function handlePointerDown(event) {
     const { top, left } = event.target.getBoundingClientRect()
     const localX = event.clientX - left;
     const localY = event.clientY - top;
-    setCircles([ ...circles, [localX, localY]])
+    setStrokes([ ...strokes, [localX, localY]])
   }
 
   function handlePointerMove(event) {
@@ -22,8 +22,8 @@ export default function(props) {
   }
 
   useEffect(() => {
-    localStorage.setItem('circles', JSON.stringify(circles))
-  }, [circles])
+    localStorage.setItem('strokes', JSON.stringify(strokes))
+  }, [strokes])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -44,13 +44,13 @@ export default function(props) {
     if (canvas && ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#000000';
-      for (let i = 0; i < circles.length; i++) {
+      for (let i = 0; i < strokes.length; i++) {
         ctx.beginPath();
-        ctx.arc(circles[i][0], circles[i][1], 2, 0, 2 * Math.PI);
+        ctx.arc(strokes[i][0], strokes[i][1], 2, 0, 2 * Math.PI);
         ctx.fill();
       }
     }
-  }, [circles]);
+  }, [strokes]);
 
   useEffect(() => {
     const canvas = canvasRef.current
