@@ -1,77 +1,92 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef } from "react";
 
-export default function(props) {
-  const [ strokes, setStrokes ] = useState<any[]>(JSON.parse(localStorage.getItem('strokes') || '[]'))
-  const [ currentStroke, setCurrentStroke ] = useState<any[]>([])
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+export default function (props) {
+  const [strokes, setStrokes] = useState<any[]>(
+    JSON.parse(localStorage.getItem("strokes") || "[]")
+  );
+  const [currentStroke, setCurrentStroke] = useState<any[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   function clear() {
-    setStrokes([])
+    setStrokes([]);
+  }
+
+  async function done() {
+    const canvas = canvasRef.current;
+    const base64image = canvas?.toDataURL();
+    await fetch("http://192.168.40.70:3000/upload", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        base64image,
+      }),
+    });
   }
 
   function handlePointerDown(event) {
-    const { top, left } = event.target.getBoundingClientRect()
+    const { top, left } = event.target.getBoundingClientRect();
     const localX = event.clientX - left;
     const localY = event.clientY - top;
     // setStrokes([ ...strokes, [localX, localY]])
-    setCurrentStroke([[localX, localY]])
+    setCurrentStroke([[localX, localY]]);
   }
 
   function handlePointerMove(event) {
     if (currentStroke.length > 0) {
-      const { top, left } = event.target.getBoundingClientRect()
+      const { top, left } = event.target.getBoundingClientRect();
       const localX = event.clientX - left;
       const localY = event.clientY - top;
-      setCurrentStroke([...currentStroke, [localX, localY]])
+      setCurrentStroke([...currentStroke, [localX, localY]]);
     }
   }
 
   function handlePointerUp(event) {
-    setStrokes([ ...strokes, currentStroke])
-    setCurrentStroke([])
+    setStrokes([...strokes, currentStroke]);
+    setCurrentStroke([]);
   }
 
   useEffect(() => {
-    localStorage.setItem('strokes', JSON.stringify(strokes))
-  }, [strokes])
+    localStorage.setItem("strokes", JSON.stringify(strokes));
+  }, [strokes]);
 
   // set scale for hidpi displays
   useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext('2d');
-    const ratio = window.devicePixelRatio || 1;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    const ratio = 2;
     if (canvas) {
-      canvas.width = props.width * ratio
-      canvas.height = props.height * ratio
-      canvas.style.width = props.width + 'px'
-      canvas.style.height = props.height + 'px'
+      canvas.width = props.width * ratio;
+      canvas.height = props.height * ratio;
+      canvas.style.width = props.width + "px";
+      canvas.style.height = props.height + "px";
     }
-    ctx?.scale(ratio, ratio)
-  }, [])
+    ctx?.scale(ratio, ratio);
+  }, []);
 
   // draw strokes from state
   useEffect(() => {
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext('2d');
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
     if (canvas && ctx) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 3;
 
-      
       if (strokes.length > 0) {
-        ctx.strokeStyle= '#000000';
         ctx.beginPath();
         for (let n = 0; n < strokes.length; n++) {
-          const s = strokes[n]
-          ctx.moveTo(s[0][0], s[0][1])
+          const s = strokes[n];
+          ctx.moveTo(s[0][0], s[0][1]);
           for (let p = 0; p < s.length; p++) {
-            ctx.lineTo(s[p][0], s[p][1])
+            ctx.lineTo(s[p][0], s[p][1]);
           }
         }
         ctx.stroke();
       }
 
       if (currentStroke.length > 0) {
-        ctx.strokeStyle= '#000000';
         ctx.beginPath();
         ctx.moveTo(currentStroke[0][0], currentStroke[0][1]);
         for (let i = 0; i < currentStroke.length; i++) {
@@ -79,29 +94,37 @@ export default function(props) {
         }
         ctx.stroke();
       }
-
     }
   }, [strokes, currentStroke]);
 
   useEffect(() => {
-    const canvas = canvasRef.current
+    const canvas = canvasRef.current;
     if (canvas) {
-      canvas.addEventListener('pointerdown', handlePointerDown)
-      canvas.addEventListener('pointermove', handlePointerMove)
-      canvas.addEventListener('pointerup', handlePointerUp)
+      canvas.addEventListener("pointerdown", handlePointerDown);
+      canvas.addEventListener("pointermove", handlePointerMove);
+      canvas.addEventListener("pointerup", handlePointerUp);
 
       return () => {
-        canvas.removeEventListener('pointerdown', handlePointerDown)
-        canvas.removeEventListener('pointermove', handlePointerMove)
-        canvas.removeEventListener('pointerup', handlePointerUp)
-      }
+        canvas.removeEventListener("pointerdown", handlePointerDown);
+        canvas.removeEventListener("pointermove", handlePointerMove);
+        canvas.removeEventListener("pointerup", handlePointerUp);
+      };
     }
-  })
+  });
 
   return (
     <>
-    <canvas style={{touchAction: 'none'}} ref={canvasRef} {...props}></canvas>
-    <div><button onClick={clear}>clear</button></div>
+      <canvas
+        style={{ touchAction: "none" }}
+        ref={canvasRef}
+        {...props}
+      ></canvas>
+      <div>
+        <button onClick={done}>All Done</button>
+      </div>
+      <div>
+        <button onClick={clear}>clear</button>
+      </div>
     </>
-  )
+  );
 }
