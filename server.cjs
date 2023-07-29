@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const app = express();
+const { mkdirpSync } = require('mkdirp')
 const ba64 = require('ba64')
 const port = 3000;
 const { getGame } = require('./game-manager.cjs')
@@ -25,6 +26,7 @@ app.get('/exquisite-corpse/:id', (req, res) => {
 // Set up a route for file uploads
 app.post('/exquisite-corpse/upload', (req, res) => {
   // Handle the uploaded file
+  mkdirpSync('uploads')
   ba64.writeImageSync('uploads/' + Date.now(), req.body.base64image)
   res.json({ message: 'File uploaded successfully!' });
 });
