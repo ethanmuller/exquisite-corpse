@@ -14,7 +14,7 @@ export default function (props) {
   async function done() {
     const canvas = canvasRef.current;
     const base64image = canvas?.toDataURL();
-    await fetch("http://192.168.40.70:3000/upload", {
+    await fetch("/exquisite-corpse/upload", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
