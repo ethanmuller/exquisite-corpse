@@ -6,6 +6,7 @@ const { mkdirpSync } = require('mkdirp')
 const ba64 = require('ba64')
 const port = 3000;
 const { getGame } = require('./game-manager.cjs')
+const fs = require('fs')
 
 app.use(cors())
 
@@ -17,10 +18,16 @@ app.get('/exquisite-corpse', (req, res) => {
   res.sendFile(__dirname + '/dist/index.html')
 });
 
-app.get('/exquisite-corpse/:id', (req, res) => {
+app.get('/exquisite-corpse/api/all', (req, res) => {
+  const file = fs.readFileSync('games.json')
+    const games = JSON.parse(file)
+  res.json(games)
+})
+
+app.get('/exquisite-corpse/api/:id', (req, res) => {
   // Handle the uploaded file
-  const gameState = getGame(req.params.id)
-  res.json({ gameState: gameState })
+  const game = getGame(req.params.id)
+  res.json(game)
 });
 
 // Set up a route for file uploads

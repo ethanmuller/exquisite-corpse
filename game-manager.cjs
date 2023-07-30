@@ -1,8 +1,11 @@
 const fs = require('fs')
 const { mkdirpSync } = require('mkdirp')
+const { rimrafSync } = require('rimraf')
+
 
 function resetGames() {
-    fs.writeFileSync('games.json', '{}', { encoding: 'utf8', })
+    rimrafSync('corpses')
+    fs.writeFileSync('games.json', '[]', { encoding: 'utf8', })
 }
 
 function createGame() {
@@ -11,7 +14,10 @@ function createGame() {
     const games = JSON.parse(file)
     const now = Date.now()
     mkdirpSync(`corpses/${now}`)
-    games[now] = 'PleaseDrawHead'
+    games.push({
+      id: now,
+      gameState: 'PleaseDrawHand'
+    })
     fs.writeFileSync('games.json', JSON.stringify(games, null, ' '), { encoding: 'utf8', })
   })
 }
@@ -19,7 +25,8 @@ function createGame() {
 function getGame(id) {
   const file = fs.readFileSync('games.json')
   const games = JSON.parse(file)
-  return games[id]
+  const game = games.find(g => g.id == id)
+  return game
 }
 
 function editGame(id) {
