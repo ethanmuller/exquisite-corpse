@@ -16,7 +16,7 @@ function createGame() {
     mkdirpSync(`corpses/${now}`)
     games.push({
       id: now,
-      gameState: 'PleaseDrawHand'
+      gameState: 'PleaseDrawHead'
     })
     fs.writeFileSync('games.json', JSON.stringify(games, null, ' '), { encoding: 'utf8', })
   })

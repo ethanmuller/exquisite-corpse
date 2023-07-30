@@ -1,8 +1,12 @@
 import { useEffect, useState, useRef } from "react";
+import { useParams, useSearchParams } from 'react-router-dom';
 
 export default function (props) {
+  const { id } = useParams()
+  const [ searchParams ] = useSearchParams()
+  const part = searchParams.get('part')
   const [strokes, setStrokes] = useState<any[]>(
-    JSON.parse(localStorage.getItem("strokes") || "[]")
+    JSON.parse(localStorage.getItem(`strokes-${part}-${id}`) || "[]")
   );
   const [currentStroke, setCurrentStroke] = useState<any[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -48,7 +52,7 @@ export default function (props) {
   }
 
   useEffect(() => {
-    localStorage.setItem("strokes", JSON.stringify(strokes));
+    localStorage.setItem(`strokes-${part}-${id}`, JSON.stringify(strokes));
   }, [strokes]);
 
   // set scale for hidpi displays

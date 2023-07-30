@@ -1,14 +1,38 @@
 [
  {
   "id": 1690668948326,
-  "gameState": "PleaseDrawHand"
+  "gameState": "PleaseDrawHead"
  },
  {
   "id": 1690668949942,
-  "gameState": "PleaseDrawHand"
+  "gameState": "PleaseDrawHead"
  },
  {
   "id": 1690679613499,
-  "gameState": "PleaseDrawHand"
+  "gameState": "PleaseDrawHead"
+ },
+ {
+  "id": 1690681130202,
+  "gameState": "PleaseDrawBody"
+ },
+ {
+  "id": 1690681131051,
+  "gameState": "PleaseDrawHead"
+ },
+ {
+  "id": 1690681131614,
+  "gameState": "PleaseDrawFeet"
+ },
+ {
+  "id": 1690681132242,
+  "gameState": "PleaseDrawHead"
+ },
+ {
+  "id": 1690681161298,
+  "gameState": "Done"
+ },
+ {
+  "id": 1690681161878,
+  "gameState": "PleaseDrawHead"
  }
 ]
