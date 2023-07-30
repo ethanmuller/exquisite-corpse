@@ -18,13 +18,14 @@ export default function (props) {
   async function done() {
     const canvas = canvasRef.current;
     const base64image = canvas?.toDataURL();
-    await fetch("http://localhost:3000/exquisite-corpse/upload", {
+    await fetch(`http://localhost:3000/exquisite-corpse/api/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         base64image,
+        part,
       }),
     });
   }

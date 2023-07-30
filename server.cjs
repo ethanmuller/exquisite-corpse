@@ -30,6 +30,14 @@ app.get('/exquisite-corpse/api/:id', (req, res) => {
   res.json(game)
 });
 
+app.post('/exquisite-corpse/api/:id', (req, res) => {
+  const game = getGame(req.params.id)
+  mkdirpSync(`corpses/${req.params.id}/`)
+  ba64.writeImageSync(`corpses/${req.params.id}/${req.body.part}`, req.body.base64image)
+
+  res.json(game)
+});
+
 // Set up a route for file uploads
 app.post('/exquisite-corpse/upload', (req, res) => {
   // Handle the uploaded file
