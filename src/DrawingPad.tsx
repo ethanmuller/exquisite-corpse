@@ -1,16 +1,68 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Thing } from './Asdf.js'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
+
+type Part = 'head' | 'body' | 'feet'
+type GameState = 'PleaseDrawHead' | 'PleaseDrawBody' | 'PleaseDrawFeet' | 'Done' | null
+
+function partToState(part: Part):GameState {
+  switch(part) {
+    case 'head':
+      return 'PleaseDrawHead'
+    case 'body':
+      return 'PleaseDrawBody'
+    case 'feet':
+      return 'PleaseDrawFeet'
+  }
+  return null
+}
+
+function stateToPart(start: State):Part {
+  switch(start) {
+    case 'PleaseDrawHead':
+      return 'head'
+    case 'PleaseDrawBody':
+      return 'body'
+    case 'PleaseDrawFeet':
+      return 'feet'
+  }
+  return null
+}
+
+function nextPart(part: Part):Part | null {
+  switch(part) {
+    case 'head':
+      return 'body'
+    case 'body':
+      return 'feet'
+    case 'feet':
+      return null
+  }
+}
+
+function getNextStateFromState(state) {
+  switch (state) {
+    case 'PleaseDrawHead':
+      return 'PleaseDrawBody'
+    case 'PleaseDrawBody':
+      return 'PleaseDrawFeet'
+    case 'PleaseDrawFeet':
+      return 'Done'
+    case 'Done':
+      return null
+  }
+}
 
 export default function (props) {
   const { id } = useParams()
   const [ searchParams ] = useSearchParams()
   const part = searchParams.get('part')
+  const [ isViewingPageForActiveState, setIsViewingPageForActiveState ] = useState(true)
   const [strokes, setStrokes] = useState<any[]>(
     JSON.parse(localStorage.getItem(`strokes-${part}-${id}`) || "[]")
   );
   const [game, setGame] = useState({})
+  const [enabled, setEnabled] = useState(true)
   const [currentStroke, setCurrentStroke] = useState<any[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -37,6 +89,7 @@ export default function (props) {
   }
 
   function handlePointerDown(event) {
+    if (!enabled) return
     const { top, left } = event.target.getBoundingClientRect();
     const localX = event.clientX - left;
     const localY = event.clientY - top;
@@ -45,6 +98,7 @@ export default function (props) {
   }
 
   function handlePointerMove(event) {
+    if (!enabled) return
     if (currentStroke.length > 0) {
       const { top, left } = event.target.getBoundingClientRect();
       const localX = event.clientX - left;
@@ -54,6 +108,7 @@ export default function (props) {
   }
 
   function handlePointerUp(event) {
+    if (!enabled) return
     setStrokes([...strokes, currentStroke]);
     setCurrentStroke([]);
   }
@@ -62,6 +117,14 @@ export default function (props) {
   useEffect(() => {
     localStorage.setItem(`strokes-${part}-${id}`, JSON.stringify(strokes));
   }, [strokes]);
+
+  useEffect(() => {
+   setIsViewingPageForActiveState(partToState(part) === game.gameState)
+  }, [game, part]);
+
+  useEffect(() => {
+   setEnabled(isViewingPageForActiveState)
+  }, [isViewingPageForActiveState]);
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_SERVER_URL}/${id}`, {
@@ -135,6 +198,16 @@ export default function (props) {
     }
   });
 
+
+  function Controls (props) {
+    return (
+      <div>
+      <button onClick={done}>All Done</button>
+      <button onClick={clear}>Clear</button>
+      </div>
+    )
+  }
+
   return (
     <>
       <canvas
@@ -142,11 +215,14 @@ export default function (props) {
         ref={canvasRef}
         {...props}
       ></canvas>
-      <Thing viewingPart={part} game={game} />
-      <div>
-        <button onClick={done}>All Done</button>
-        <button onClick={clear}>Clear</button>
-      </div>
+      { isViewingPageForActiveState ?
+        <div>
+        <div>Please draw {part}</div>
+        <Controls />
+        </div>
+      :
+        <Thing viewingPart={part} game={game} />
+      }
     </>
   );
 }

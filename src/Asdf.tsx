@@ -58,8 +58,14 @@ function UrlForActiveState(props) {
 
   return (
     <div>
-    <CopyToClipboard text={`${import.meta.env.VITE_CLIENT_URL}${props.game.id}?part=${stateToPart(props.game.gameState)}`} onCopy={() => console.log('got it')}><span>uh</span></CopyToClipboard>
-    {copied ? <span>copied</span> : null}
+    <label>
+    <div>{props.part} done! next step:</div>
+    <input readOnly type='text' value={`${import.meta.env.VITE_CLIENT_URL}${props.game.id}?part=${stateToPart(props.game.gameState)}`} />
+    </label>
+    <CopyToClipboard text={`${import.meta.env.VITE_CLIENT_URL}${props.game.id}?part=${stateToPart(props.game.gameState)}`} onCopy={() => setCopied(true)}>
+    <button>Copy</button>
+    </CopyToClipboard>
+    {copied ? <span style={{color: 'green'}}> Copied!</span> : null}
     </div>
   )
 }
