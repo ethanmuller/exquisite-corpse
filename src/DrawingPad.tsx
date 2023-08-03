@@ -62,7 +62,7 @@ export default function (props) {
   }, [strokes]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/exquisite-corpse/api/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
