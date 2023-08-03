@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from 'react-router-dom';
+import { Thing } from './Asdf.js'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 export default function (props) {
   const { id } = useParams()
@@ -140,6 +142,7 @@ export default function (props) {
         ref={canvasRef}
         {...props}
       ></canvas>
+      <Thing viewingPart={part} game={game} />
       <div>
         <button onClick={done}>All Done</button>
         <button onClick={clear}>Clear</button>
