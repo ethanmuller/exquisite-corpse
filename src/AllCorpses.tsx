@@ -28,14 +28,18 @@ export default function Component(props) {
 
   useEffect(() => {
     async function getAll() {
-      const response = await fetch("https://mush.network/exquisite-corpse/api/all", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const json = await response.json()
-      setGameList(json)
+      try {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/all`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const json = await response.json()
+        setGameList(json)
+      } catch (e) {
+        console.error('ERROR FETCHING LIST OF GAMES\n', e)
+      }
     }
     getAll()
   }, [])

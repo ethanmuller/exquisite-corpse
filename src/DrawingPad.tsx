@@ -8,6 +8,7 @@ export default function (props) {
   const [strokes, setStrokes] = useState<any[]>(
     JSON.parse(localStorage.getItem(`strokes-${part}-${id}`) || "[]")
   );
+  const [game, setGame] = useState({})
   const [currentStroke, setCurrentStroke] = useState<any[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -18,7 +19,7 @@ export default function (props) {
   async function done() {
     const canvas = canvasRef.current;
     const base64image = canvas?.toDataURL();
-    await fetch(`http://localhost:3000/exquisite-corpse/api/${id}`, {
+    const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,6 +29,9 @@ export default function (props) {
         part,
       }),
     });
+
+    const data = await response.json()
+    setGame(data)
   }
 
   function handlePointerDown(event) {
@@ -52,9 +56,21 @@ export default function (props) {
     setCurrentStroke([]);
   }
 
+  // local persistence for strokes
   useEffect(() => {
     localStorage.setItem(`strokes-${part}-${id}`, JSON.stringify(strokes));
   }, [strokes]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/exquisite-corpse/api/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then(data => data.json())
+      .then(json => setGame(json))
+  }, []);
 
   // set scale for hidpi displays
   useEffect(() => {
@@ -126,9 +142,7 @@ export default function (props) {
       ></canvas>
       <div>
         <button onClick={done}>All Done</button>
-      </div>
-      <div>
-        <button onClick={clear}>clear</button>
+        <button onClick={clear}>Clear</button>
       </div>
     </>
   );

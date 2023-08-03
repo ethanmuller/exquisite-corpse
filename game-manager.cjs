@@ -29,12 +29,31 @@ function getGame(id) {
   return game
 }
 
-function editGame(id) {
+function getNextStateFromState(state) {
+  switch (state) {
+    case 'PleaseDrawHead':
+      return 'PleaseDrawBody'
+    case 'PleaseDrawBody':
+      return 'PleaseDrawFeet'
+    case 'PleaseDrawFeet':
+      return 'Done'
+    case 'Done':
+      return null
+  }
+}
+
+function gameNextState(id) {
+  const file = fs.readFileSync('games.json')
+  const games = JSON.parse(file)
+  const game = games.find(g => g.id == id)
+  game.gameState = getNextStateFromState(game.gameState)
+  fs.writeFileSync('games.json', JSON.stringify(games, null, ' '), { encoding: 'utf8', })
+  return game
 }
 
 module.exports = {
   createGame,
-  editGame,
   resetGames,
   getGame,
+  gameNextState,
 }

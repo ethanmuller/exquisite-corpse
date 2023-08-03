@@ -5,7 +5,7 @@ const app = express();
 const { mkdirpSync } = require('mkdirp')
 const ba64 = require('ba64')
 const port = 3000;
-const { getGame } = require('./game-manager.cjs')
+const { getGame, gameNextState } = require('./game-manager.cjs')
 const fs = require('fs')
 
 app.use(cors())
@@ -25,25 +25,15 @@ app.get('/exquisite-corpse/api/all', (req, res) => {
 })
 
 app.get('/exquisite-corpse/api/:id', (req, res) => {
-  // Handle the uploaded file
   const game = getGame(req.params.id)
   res.json(game)
 });
 
 app.post('/exquisite-corpse/api/:id', (req, res) => {
-  const game = getGame(req.params.id)
   mkdirpSync(`corpses/${req.params.id}/`)
   ba64.writeImageSync(`corpses/${req.params.id}/${req.body.part}`, req.body.base64image)
-
+  const game = gameNextState(req.params.id)
   res.json(game)
-});
-
-// Set up a route for file uploads
-app.post('/exquisite-corpse/upload', (req, res) => {
-  // Handle the uploaded file
-  mkdirpSync('uploads')
-  ba64.writeImageSync('uploads/' + Date.now(), req.body.base64image)
-  res.json({ message: 'File uploaded successfully!' });
 });
 
 app.listen(port, () => {

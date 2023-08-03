@@ -13,6 +13,7 @@ dist-ssr
 *.local
 uploads
 corpses
+games.json
 
 # Editor directories and files
 .vscode/*
