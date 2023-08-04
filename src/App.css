@@ -5,4 +5,5 @@ img {
   display: block;
   background: white;
   max-width: 100%;
+  margin: 0 auto;
 }

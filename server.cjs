@@ -5,7 +5,7 @@ const app = express();
 const { mkdirpSync } = require('mkdirp')
 const ba64 = require('ba64')
 const port = 3000;
-const { getGame, gameNextState } = require('./game-manager.cjs')
+const { getGame, gameNextState, createGame } = require('./game-manager.cjs')
 const fs = require('fs')
 
 app.use(cors())
@@ -28,6 +28,15 @@ app.get('/exquisite-corpse/api/all', (req, res) => {
 
 app.get('/exquisite-corpse/api/:id', (req, res) => {
   const game = getGame(req.params.id)
+  if (game) {
+    res.json(game)
+  } else {
+    res.sendStatus(404)
+  }
+});
+
+app.post('/exquisite-corpse/api/new', (req, res) => {
+  const game = createGame()
   res.json(game)
 });
 

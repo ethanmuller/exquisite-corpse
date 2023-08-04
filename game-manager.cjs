@@ -9,17 +9,17 @@ function resetGames() {
 }
 
 function createGame() {
-  fs.readFile('games.json', (err, file) => {
-    if (err) throw(err)
-    const games = JSON.parse(file)
-    const now = Date.now()
-    mkdirpSync(`corpses/${now}`)
-    games.push({
-      id: now,
-      gameState: 0
-    })
-    fs.writeFileSync('games.json', JSON.stringify(games, null, ' '), { encoding: 'utf8', })
-  })
+  const file = fs.readFileSync('games.json')
+  const games = JSON.parse(file)
+  const now = Date.now()
+  mkdirpSync(`corpses/${now}`)
+  const game = {
+    id: now,
+    gameState: 0
+  }
+  games.push(game)
+  fs.writeFileSync('games.json', JSON.stringify(games, null, ' '), { encoding: 'utf8', })
+  return game
 }
 
 function getGame(id) {

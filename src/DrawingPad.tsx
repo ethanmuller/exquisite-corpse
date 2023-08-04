@@ -57,7 +57,8 @@ export default function DrawingPad(props) {
 
   function handlePointerDown(event) {
     if (!enabled) return;
-    const { top, left } = event.target.getBoundingClientRect();
+    const canvas = canvasRef.current;
+    const { top, left } = canvas?.getBoundingClientRect();
     const localX = event.clientX - left;
     const localY = event.clientY - top;
     // setStrokes([ ...strokes, [localX, localY]])
@@ -66,8 +67,9 @@ export default function DrawingPad(props) {
 
   function handlePointerMove(event) {
     if (!enabled) return;
+    const canvas = canvasRef.current;
     if (currentStroke.length > 0) {
-      const { top, left } = event.target.getBoundingClientRect();
+      const { top, left } = canvas?.getBoundingClientRect();
       const localX = event.clientX - left;
       const localY = event.clientY - top;
       setCurrentStroke([...currentStroke, [localX, localY]]);
@@ -117,14 +119,17 @@ export default function DrawingPad(props) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.strokeStyle = "#000000";
       ctx.lineWidth = 3;
+      ctx.lineJoin = 'round'
 
       if (strokes.length > 0) {
         ctx.beginPath();
         for (let n = 0; n < strokes.length; n++) {
           const s = strokes[n];
-          ctx.moveTo(s[0][0], s[0][1]);
-          for (let p = 0; p < s.length; p++) {
-            ctx.lineTo(s[p][0], s[p][1]);
+          if (s[0]) {
+            ctx.moveTo(s[0][0], s[0][1]);
+            for (let p = 0; p < s.length; p++) {
+              ctx.lineTo(s[p][0], s[p][1]);
+            }
           }
         }
         ctx.stroke();
@@ -144,14 +149,14 @@ export default function DrawingPad(props) {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      canvas.addEventListener("pointerdown", handlePointerDown);
-      canvas.addEventListener("pointermove", handlePointerMove);
-      canvas.addEventListener("pointerup", handlePointerUp);
+      window.addEventListener("pointerdown", handlePointerDown);
+      window.addEventListener("pointermove", handlePointerMove);
+      window.addEventListener("pointerup", handlePointerUp);
 
       return () => {
-        canvas.removeEventListener("pointerdown", handlePointerDown);
-        canvas.removeEventListener("pointermove", handlePointerMove);
-        canvas.removeEventListener("pointerup", handlePointerUp);
+        window.removeEventListener("pointerdown", handlePointerDown);
+        window.removeEventListener("pointermove", handlePointerMove);
+        window.removeEventListener("pointerup", handlePointerUp);
       };
     }
   });
@@ -164,6 +169,7 @@ export default function DrawingPad(props) {
           height: "50px",
           objectFit: "cover",
           objectPosition: "bottom",
+          pointerEvents: 'none',
         }}
         src={`${import.meta.env.VITE_SERVER_URL}img/${id}/${
           parts[parts.indexOf(props.part) - 1]
@@ -185,7 +191,7 @@ export default function DrawingPad(props) {
   const isAfterFirstPart = partToState(part) > 0;
 
   return (
-    <div>
+    <div style={{touchAction: 'none', textAlign: 'center'}}>
       {isAfterFirstPart ? (
         <PreviousSliver width={props.width} part={part} />
       ) : null}
