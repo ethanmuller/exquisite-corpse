@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { Thing as Url } from "./Asdf.js";
+import { Thing as NextSteps } from "./Asdf.js";
 
 type GameState = number;
 
@@ -10,7 +10,7 @@ function partToState(part: string | null): GameState {
   if (part) {
     return parts.indexOf(part);
   }
-  return -1
+  return -1;
 }
 
 function stateToPart(state: GameState): string {
@@ -21,7 +21,7 @@ export default function DrawingPad(props) {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const part = searchParams.get("part");
-  const [isViewingPageForActiveState, setIsViewingPageForActiveState] =
+  const [isViewingPageForLatestState, setIsViewingPageForLatestState] =
     useState(true);
   const [strokes, setStrokes] = useState<any[]>(
     JSON.parse(localStorage.getItem(`strokes-${part}-${id}`) || "[]")
@@ -86,13 +86,12 @@ export default function DrawingPad(props) {
   }, [strokes]);
 
   useEffect(() => {
-    setIsViewingPageForActiveState(partToState(part) === props.game.gameState);
+    setIsViewingPageForLatestState(partToState(part) === props.game.gameState);
   }, [props.game, part]);
 
   useEffect(() => {
-    setEnabled(isViewingPageForActiveState);
-  }, [isViewingPageForActiveState]);
-
+    setEnabled(isViewingPageForLatestState);
+  }, [isViewingPageForLatestState]);
 
   // set scale for hidpi displays
   useEffect(() => {
@@ -155,15 +154,6 @@ export default function DrawingPad(props) {
     }
   });
 
-  function Controls(props) {
-    return (
-      <div>
-        <button onClick={done}>All Done</button>
-        <button onClick={clear}>Clear</button>
-      </div>
-    );
-  }
-
   function PreviousSliver(props) {
     return (
       <img
@@ -190,29 +180,22 @@ export default function DrawingPad(props) {
     );
   }
 
-  function Prompt() {
-    return <div>Please draw {part}</div>
-  }
-
-  const isAfterFirstPart = partToState(part) > 0
+  const isAfterFirstPart = partToState(part) > 0;
 
   return (
     <div>
       {isAfterFirstPart ? (
         <PreviousSliver width={props.width} part={part} />
       ) : null}
-      <canvas
-        style={{ touchAction: "none" }}
-        ref={canvasRef}
-      ></canvas>
-      {isViewingPageForActiveState ? (
-        <div>
-          <Prompt />
-          <Controls />
-        </div>
-      ) : (
-        <Url viewingPart={part} game={props.game} />
-      )}
+      <canvas style={{ touchAction: "none" }} ref={canvasRef}></canvas>
+
+      <NextSteps
+        part={part}
+        game={props.game}
+        isThisPartOver={!isViewingPageForLatestState}
+        onDone={done}
+        onClear={clear}
+      />
     </div>
   );
 }
