@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-router-dom";
 import AllCorpses from "./AllCorpses.tsx";
-import DrawingPad from "./DrawingPad.tsx";
+import Corpse from "./Corpse.tsx";
 
 function Home() {
   return <h2>Home</h2>;
@@ -25,7 +25,7 @@ function App() {
           </nav>
           <Routes>
             <Route path="/exquisite-corpse/" element={<AllCorpses />} />
-            <Route path="/exquisite-corpse/:id" element={<DrawingPad width={320} height={320} />} />
+            <Route path="/exquisite-corpse/:id" element={<Corpse width={320} height={320} />} />
           </Routes>
         </div>
       </Router>
