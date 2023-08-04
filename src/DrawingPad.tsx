@@ -173,7 +173,7 @@ export default function DrawingPad(props) {
           objectFit: "cover",
           objectPosition: "bottom",
         }}
-        src={`${import.meta.env.VITE_SERVER_URL}${id}/${
+        src={`${import.meta.env.VITE_SERVER_URL}img/${id}/${
           parts[parts.indexOf(props.part) - 1]
         }.png`}
       />

@@ -22,9 +22,9 @@ export default function Corpse(props) {
   function FullCorpse(props) {
     return game.gameState >= 3 ? (
       <div style={{width: 320}}>
-        <img src={`${import.meta.env.VITE_SERVER_URL}${id}/head.png`} />
-        <img src={`${import.meta.env.VITE_SERVER_URL}${id}/body.png`} />
-        <img src={`${import.meta.env.VITE_SERVER_URL}${id}/feet.png`} />
+        <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/head.png`} />
+        <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/body.png`} />
+        <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/feet.png`} />
       </div>
     ) : <div>not done yet</div>
   }

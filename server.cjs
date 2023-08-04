@@ -13,7 +13,7 @@ app.use(cors())
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-app.use('/exquisite-corpse', express.static('corpses'))
+app.use('/exquisite-corpse/img', express.static('corpses'))
 
 app.get('/exquisite-corpse', (req, res) => {
   // Handle the uploaded file
