@@ -1,21 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
 
+const parts = [
+  'head',
+  'body',
+  'feet',
+]
+
 function getPart(state) {
-  switch (state) {
-    case 'PleaseDrawHead':
-      return 'head'
-      break;
-    case 'PleaseDrawBody':
-      return 'body'
-      break;
-    case 'PleaseDrawFeet':
-      return 'feet'
-      break;
-    case 'Done':
-      return
-      break;
-  }
+  return parts[state]
 }
 
 function Corpse(props) {
@@ -29,7 +22,7 @@ export default function Component(props) {
   useEffect(() => {
     async function getAll() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/all`, {
+        const response = await fetch(`${import.meta.env.VITE_SERVER_URL}api/all`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

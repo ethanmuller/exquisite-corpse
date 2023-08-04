@@ -1,74 +1,26 @@
 [
  {
-  "id": 1691019523625,
-  "gameState": "PleaseDrawBody"
+  "id": 1691107465686,
+  "gameState": 3
  },
  {
-  "id": 1691019523710,
-  "gameState": "Done"
+  "id": 1691107466696,
+  "gameState": 3
  },
  {
-  "id": 1691019523792,
-  "gameState": "PleaseDrawFeet"
+  "id": 1691107467312,
+  "gameState": 3
  },
  {
-  "id": 1691019523867,
-  "gameState": "Done"
+  "id": 1691107468034,
+  "gameState": 3
  },
  {
-  "id": 1691075928842,
-  "gameState": null
+  "id": 1691107468833,
+  "gameState": 3
  },
  {
-  "id": 1691075929434,
-  "gameState": "Done"
- },
- {
-  "id": 1691075930083,
-  "gameState": "Done"
- },
- {
-  "id": 1691075930760,
-  "gameState": "PleaseDrawBody"
- },
- {
-  "id": 1691075931460,
-  "gameState": "Done"
- },
- {
-  "id": 1691075932126,
-  "gameState": "Done"
- },
- {
-  "id": 1691075932823,
-  "gameState": "Done"
- },
- {
-  "id": 1691075933519,
-  "gameState": "Done"
- },
- {
-  "id": 1691075934193,
-  "gameState": "Done"
- },
- {
-  "id": 1691106519799,
-  "gameState": "Done"
- },
- {
-  "id": 1691106520578,
-  "gameState": "PleaseDrawHead"
- },
- {
-  "id": 1691106521177,
-  "gameState": "PleaseDrawHead"
- },
- {
-  "id": 1691106521768,
-  "gameState": "PleaseDrawHead"
- },
- {
-  "id": 1691106522573,
-  "gameState": "PleaseDrawHead"
+  "id": 1691107470292,
+  "gameState": 0
  }
 ]

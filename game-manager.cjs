@@ -16,7 +16,7 @@ function createGame() {
     mkdirpSync(`corpses/${now}`)
     games.push({
       id: now,
-      gameState: 'PleaseDrawHead'
+      gameState: 0
     })
     fs.writeFileSync('games.json', JSON.stringify(games, null, ' '), { encoding: 'utf8', })
   })
@@ -30,23 +30,14 @@ function getGame(id) {
 }
 
 function getNextStateFromState(state) {
-  switch (state) {
-    case 'PleaseDrawHead':
-      return 'PleaseDrawBody'
-    case 'PleaseDrawBody':
-      return 'PleaseDrawFeet'
-    case 'PleaseDrawFeet':
-      return 'Done'
-    case 'Done':
-      return null
-  }
+  return state + 1
 }
 
 function gameNextState(id) {
   const file = fs.readFileSync('games.json')
   const games = JSON.parse(file)
   const game = games.find(g => g.id == id)
-  if (game.gameState !== 'Done') {
+  if (game.gameState < 3) {
     game.gameState = getNextStateFromState(game.gameState)
     fs.writeFileSync('games.json', JSON.stringify(games, null, ' '), { encoding: 'utf8', })
   }

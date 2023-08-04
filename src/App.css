@@ -1,2 +1,7 @@
 #root {
 }
+
+img {
+  display: block;
+  background: white;
+}

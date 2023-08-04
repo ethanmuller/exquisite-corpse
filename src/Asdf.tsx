@@ -3,54 +3,25 @@ import { Link } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 type Part = 'head' | 'body' | 'feet'
-type GameState = 'PleaseDrawHead' | 'PleaseDrawBody' | 'PleaseDrawFeet' | 'Done' | null
+type GameState = number
+
+const parts = [
+  'head',
+  'body',
+  'feet',
+]
 
 function partToState(part: Part):GameState {
-  switch(part) {
-    case 'head':
-      return 'PleaseDrawHead'
-    case 'body':
-      return 'PleaseDrawBody'
-    case 'feet':
-      return 'PleaseDrawFeet'
-  }
-  return null
+  return parts.indexOf(part)
 }
 
-function stateToPart(start: State):Part {
-  switch(start) {
-    case 'PleaseDrawHead':
-      return 'head'
-    case 'PleaseDrawBody':
-      return 'body'
-    case 'PleaseDrawFeet':
-      return 'feet'
-  }
-  return null
+function stateToPart(state: GameState):Part {
+  return parts[state]
 }
 
-function nextPart(part: Part):Part | null {
-  switch(part) {
-    case 'head':
-      return 'body'
-    case 'body':
-      return 'feet'
-    case 'feet':
-      return null
-  }
-}
 
-function getNextStateFromState(state) {
-  switch (state) {
-    case 'PleaseDrawHead':
-      return 'PleaseDrawBody'
-    case 'PleaseDrawBody':
-      return 'PleaseDrawFeet'
-    case 'PleaseDrawFeet':
-      return 'Done'
-    case 'Done':
-      return null
-  }
+function nextPart(part: Part):Part {
+  return parts[partToState(part) + 1]
 }
 
 function UrlForActiveState(props) {

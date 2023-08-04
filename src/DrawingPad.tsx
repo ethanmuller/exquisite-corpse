@@ -3,54 +3,20 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { Thing } from './Asdf.js'
 
 type Part = 'head' | 'body' | 'feet'
-type GameState = 'PleaseDrawHead' | 'PleaseDrawBody' | 'PleaseDrawFeet' | 'Done' | null
+type GameState = number
+
+const parts = [
+  'head',
+  'body',
+  'feet',
+]
 
 function partToState(part: Part):GameState {
-  switch(part) {
-    case 'head':
-      return 'PleaseDrawHead'
-    case 'body':
-      return 'PleaseDrawBody'
-    case 'feet':
-      return 'PleaseDrawFeet'
-  }
-  return null
+  return parts.indexOf(part)
 }
 
-function stateToPart(start: State):Part {
-  switch(start) {
-    case 'PleaseDrawHead':
-      return 'head'
-    case 'PleaseDrawBody':
-      return 'body'
-    case 'PleaseDrawFeet':
-      return 'feet'
-  }
-  return null
-}
-
-function nextPart(part: Part):Part | null {
-  switch(part) {
-    case 'head':
-      return 'body'
-    case 'body':
-      return 'feet'
-    case 'feet':
-      return null
-  }
-}
-
-function getNextStateFromState(state) {
-  switch (state) {
-    case 'PleaseDrawHead':
-      return 'PleaseDrawBody'
-    case 'PleaseDrawBody':
-      return 'PleaseDrawFeet'
-    case 'PleaseDrawFeet':
-      return 'Done'
-    case 'Done':
-      return null
-  }
+function stateToPart(state: GameState):Part {
+  return parts[state]
 }
 
 export default function (props) {
@@ -73,7 +39,7 @@ export default function (props) {
   async function done() {
     const canvas = canvasRef.current;
     const base64image = canvas?.toDataURL();
-    const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/${id}`, {
+    const response = await fetch(`${import.meta.env.VITE_SERVER_URL}api/${id}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -127,7 +93,7 @@ export default function (props) {
   }, [isViewingPageForActiveState]);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_SERVER_URL}/${id}`, {
+    fetch(`${import.meta.env.VITE_SERVER_URL}api/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -208,8 +174,13 @@ export default function (props) {
     )
   }
 
+  function PreviousSliver(props) {
+    return <img style={{width: props.width, height: '50px', objectFit: 'cover', objectPosition: 'bottom'}} src={`${import.meta.env.VITE_SERVER_URL}/${id}/${parts[parts.indexOf(props.part)-1]}.png`} />
+  }
+
   return (
     <>
+    {parts.indexOf(part) > 0 ? <PreviousSliver width={props.width} part={part} /> : null}
       <canvas
         style={{ touchAction: "none" }}
         ref={canvasRef}
