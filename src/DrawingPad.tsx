@@ -76,8 +76,10 @@ export default function DrawingPad(props) {
 
   function handlePointerUp(event) {
     if (!enabled) return;
-    setStrokes([...strokes, currentStroke]);
-    setCurrentStroke([]);
+    if (currentStroke.length > 0) {
+      setStrokes([...strokes, currentStroke]);
+      setCurrentStroke([]);
+    }
   }
 
   // local persistence for strokes
