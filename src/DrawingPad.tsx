@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { Thing as NextSteps } from "./Asdf.js";
+import { NextSteps } from "./NextSteps.js";
 
 type GameState = number;
 

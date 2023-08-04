@@ -86,7 +86,7 @@ function DrawingControlsView(props) {
   );
 }
 
-export function Thing(props) {
+export function NextSteps(props) {
   return (
     <>
       {props.isThisPartOver ? (
