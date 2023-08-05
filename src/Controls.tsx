@@ -1,6 +1,6 @@
 import "react";
 
-function Controls(props) {
+function Buttons(props) {
   return (
     <div>
       <span className="sp"><button onClick={props.onClear}>Clear</button></span>
@@ -9,13 +9,13 @@ function Controls(props) {
   );
 }
 
-export function NextSteps(props) {
+export function Controls(props) {
   return (
     <>
       {props.isThisPartOver ? (
         <></>
       ) : (
-        <Controls {...props} />
+        <Buttons {...props} />
       )}
     </>
   );
