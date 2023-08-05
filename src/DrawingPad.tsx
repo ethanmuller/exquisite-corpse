@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { NextSteps } from "./NextSteps.js";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { Link } from "react-router-dom";
 
 type GameState = number;
 
@@ -188,10 +190,74 @@ export default function DrawingPad(props) {
     );
   }
 
+  function CopyPrompt(props) {
+    const [copied, setCopied] = useState(false);
+
+    return (
+      <div>
+        <label>
+          <div>{props.part} done! next step:</div>
+          <input
+            readOnly
+            type="text"
+            value={`${import.meta.env.VITE_CLIENT_URL}${
+              props.game.id
+            }?part=${stateToPart(props.game.gameState)}`}
+          />
+        </label>
+        <CopyToClipboard
+          text={`${import.meta.env.VITE_CLIENT_URL}${
+            props.game.id
+          }?part=${stateToPart(props.game.gameState)}`}
+          onCopy={() => setCopied(true)}
+        >
+          <button>Copy</button>
+        </CopyToClipboard>
+        {copied ? <span style={{ color: "green" }}> Copied!</span> : null}
+      </div>
+    );
+  }
+
+  function DrawPrompt(props) {
+    return <div>Please draw <strong>the {props.part}</strong></div>
+  }
+
+  function LinkToFullCorpse(props) {
+    return (
+      <div>
+        <div>Corpse complete!</div>
+        <Link to={`/exquisite-corpse/${props.game.id}`}>View Full Corpse</Link>
+      </div>
+    );
+  }
+
+  function CallToAction(props) {
+    const views = {
+      DRAW: DrawPrompt,
+      COPY: CopyPrompt,
+      FINAL_LINK: LinkToFullCorpse,
+    }
+
+    let view;
+
+    if (props.game.gameState === 3) {
+      view = 'FINAL_LINK'
+    } else if (props.isThisPartOver) {
+      view = 'COPY'
+    } else {
+      view = 'DRAW'
+    }
+
+    const CurrentView = views[view]
+
+    return <CurrentView {...props} />
+  }
+
   const isAfterFirstPart = partToState(part) > 0;
 
   return (
     <div style={{touchAction: 'none', textAlign: 'center'}}>
+      <CallToAction part={part} game={props.game} isThisPartOver={!isViewingPageForLatestState} />
       {isAfterFirstPart ? (
         <PreviousSliver width={props.width} part={part} />
       ) : null}
