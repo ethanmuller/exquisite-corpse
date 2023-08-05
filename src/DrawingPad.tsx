@@ -106,7 +106,7 @@ export default function DrawingPad(props) {
       setCurrentStroke([...currentStroke, [localX, localY]]);
       const distance = dist(lastPoint, [localX, localY])
 
-      if (distance > 5 && event.target === canvas) {
+      if (distance > 2 && event.target === canvas) {
         slideSynth.current.triggerAttackRelease(0.1)
       }
 
@@ -158,6 +158,7 @@ export default function DrawingPad(props) {
       ctx.strokeStyle = "#000000";
       ctx.lineWidth = 3;
       ctx.lineJoin = 'round'
+      ctx.lineCap = 'round'
 
       if (strokes.length > 0) {
         ctx.beginPath();
