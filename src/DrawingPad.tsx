@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { Controls } from "./Controls.js";
 import { CallToAction } from "./CallToAction.js";
+import * as Tone from 'tone';
 
 type GameState = number;
 
@@ -14,18 +15,47 @@ function partToState(part: string | null): GameState {
   return -1;
 }
 
+function dist(pointA, pointB) {
+  return Math.sqrt(Math.pow(pointB[0]-pointA[0], 2) + Math.pow(pointB[1]-pointA[1], 2))
+}
+
 export default function DrawingPad(props) {
+  const dotSynth = useRef(null)
+  const slideSynth = useRef(null)
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const part = searchParams.get("part");
   const [isViewingPageForLatestState, setIsViewingPageForLatestState] =
     useState(true);
+  const [lastPoint, setLastPoint] = useState(null)
+
   const [strokes, setStrokes] = useState<any[]>(
     JSON.parse(localStorage.getItem(`strokes-${part}-${id}`) || "[]")
   );
   const [enabled, setEnabled] = useState(true);
   const [currentStroke, setCurrentStroke] = useState<any[]>([]);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    dotSynth.current = new Tone.NoiseSynth({
+      noise: { type: 'brown' },
+      envelope: {
+        attack: 0.005,
+        decay: 0.01,
+        sustain: 0,
+      },
+      volume: -3,
+    }).toDestination()
+    slideSynth.current = new Tone.NoiseSynth({
+      noise: { type: 'brown' },
+      envelope: {
+        attack: 0.05,
+        decay: 0.3,
+        sustain: 0,
+      },
+      volume: -32,
+    }).toDestination()
+  }, [])
 
   function clear() {
     setStrokes([]);
@@ -60,6 +90,10 @@ export default function DrawingPad(props) {
     const localY = event.clientY - top;
     // setStrokes([ ...strokes, [localX, localY]])
     setCurrentStroke([[localX, localY]]);
+    setLastPoint([localX, localY])
+    if (event.target === canvas) {
+      dotSynth.current.triggerAttackRelease(0.1)
+    }
   }
 
   function handlePointerMove(event) {
@@ -70,6 +104,13 @@ export default function DrawingPad(props) {
       const localX = event.clientX - left;
       const localY = event.clientY - top;
       setCurrentStroke([...currentStroke, [localX, localY]]);
+      const distance = dist(lastPoint, [localX, localY])
+
+      if (distance > 5 && event.target === canvas) {
+        slideSynth.current.triggerAttackRelease(0.1)
+      }
+
+      setLastPoint([localX, localY])
     }
   }
 
