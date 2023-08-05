@@ -158,7 +158,6 @@ export default function DrawingPad(props) {
       ctx.strokeStyle = "#000000";
       ctx.lineWidth = 3;
       ctx.lineJoin = 'round'
-      ctx.lineCap = 'round'
 
       if (strokes.length > 0) {
         ctx.beginPath();
@@ -172,6 +171,16 @@ export default function DrawingPad(props) {
           }
         }
         ctx.stroke();
+
+        // dot the end of each stroke
+        for (let n = 0; n < strokes.length; n++) {
+          const s = strokes[n]
+          if (s[0]) {
+            ctx.beginPath();
+            ctx.arc(s[s.length-1][0], s[s.length-1][1], 1.5, 0, 2*Math.PI)
+            ctx.fill();
+          }
+        }
       }
 
       if (currentStroke.length > 0) {
