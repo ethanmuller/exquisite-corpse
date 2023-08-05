@@ -22,6 +22,7 @@ function dist(pointA, pointB) {
 export default function DrawingPad(props) {
   const dotSynth = useRef(null)
   const slideSynth = useRef(null)
+  const clearSynth = useRef(null)
   const { id } = useParams();
   const [searchParams] = useSearchParams();
   const part = searchParams.get("part");
@@ -55,13 +56,29 @@ export default function DrawingPad(props) {
       },
       volume: -32,
     }).toDestination()
+    clearSynth.current = new Tone.Synth({
+      oscillator: {
+        type: 'sine',
+      },
+      envelope: {
+        attack: 0.001,
+        decay: 0.2,
+        sustain: 0,
+        release: 0.02,
+      },
+      volume: -12,
+    }).toDestination()
   }, [])
 
   function clear() {
+    clearSynth.current.triggerAttackRelease("C3", "32n");
+    clearSynth.current.frequency.rampTo("C7", "32n")
+
     setStrokes([]);
   }
 
   async function done() {
+    dotSynth.current.triggerAttackRelease(0.1)
     const canvas = canvasRef.current;
     const base64image = canvas?.toDataURL();
     const response = await fetch(

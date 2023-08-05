@@ -21,7 +21,7 @@ function Home() {
     navigate(`/exquisite-corpse/${game.id}?part=head`)
   }
 
-  return <div style={{ height: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><button onClick={create}>Start new corpse</button></div>
+  return <div style={{ height: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}><button className='btn__primary' onClick={create}>Start new corpse</button></div>
 }
 
 function App() {

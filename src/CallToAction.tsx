@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Link } from "react-router-dom";
+import * as Tone from 'tone';
 
 const parts = ["head", "body", "feet"];
 
@@ -13,6 +14,23 @@ function copyPromptText() {
 
 function CopyPrompt(props) {
   const [copied, setCopied] = useState(false);
+  const clipSynth = useRef(null)
+  const clipSeq = useRef(null)
+
+  useEffect(() => {
+    clipSynth.current = new Tone.Synth({
+      oscillator: {
+        type: 'sine',
+      },
+      envelope: {
+        attack: 0.001,
+        decay: 0.2,
+        sustain: 0,
+        release: 0.02,
+      },
+      volume: -12,
+    }).toDestination()
+  }, [])
 
   return (
     <div style={{fontSize: '0.75rem', lineHeight: 1.3, maxWidth: props.width, margin: '0 auto', textAlign: 'left', textWrap: 'balance', position: 'relative'}}>
@@ -31,7 +49,12 @@ function CopyPrompt(props) {
           text={`${import.meta.env.VITE_CLIENT_URL}${
             props.game.id
           }?part=${stateToPart(props.game.gameState)}`}
-          onCopy={() => setCopied(true)}
+          onCopy={() => {
+            clipSynth.current.triggerAttackRelease("C6", "32n", 0.0);
+            clipSynth.current.triggerAttackRelease("G6", "32n", 0.1);
+            clipSynth.current.triggerAttackRelease("B6", "32n", 0.2);
+            setCopied(true)
+          }}
         >
           <button className='btn__primary' style={{borderTopLeftRadius: 0, borderBottomLeftRadius: 0}}>Copy</button>
         </CopyToClipboard>
