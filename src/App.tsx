@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate } 
 import AllCorpses from "./AllCorpses.tsx";
 import Corpse from "./Corpse.tsx";
 
-function Index() {
+function Home() {
   const navigate = useNavigate()
 
   async function create() {
@@ -30,7 +30,7 @@ function App() {
       <Router>
         <div>
           <Routes>
-            <Route path="/exquisite-corpse/" element={<Index />} />
+            <Route path="/exquisite-corpse/" element={<Home />} />
             <Route path="/exquisite-corpse/all" element={<AllCorpses />} />
             <Route path="/exquisite-corpse/:id" element={<Corpse width={320} height={320} />} />
           </Routes>
