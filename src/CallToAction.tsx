@@ -9,13 +9,9 @@ function stateToPart(state: GameState): string {
   return parts[state];
 }
 
-function copyPromptText() {
-}
-
 function CopyPrompt(props) {
   const [copied, setCopied] = useState(false);
   const clipSynth = useRef(null)
-  const clipSeq = useRef(null)
 
   useEffect(() => {
     clipSynth.current = new Tone.Synth({
