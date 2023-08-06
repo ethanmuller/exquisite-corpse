@@ -50,12 +50,14 @@ export default function Corpse(props) {
 
   function FullCorpse(props) {
     return game.gameState >= 3 ? (
-      <div style={{width: 320, textAlign: 'center', margin: '0 auto'}}>
-        <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/head.png`} />
-        <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/body.png`} />
-        <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/feet.png`} />
-        <div style={{margin: '3rem 0'}}><Cta /></div>
-      </div>
+      <>
+        <div style={{width: '28vh', textAlign: 'center', margin: '0 auto'}}>
+          <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/head.png`} />
+          <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/body.png`} />
+          <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/feet.png`} />
+        </div>
+        <div style={{padding: '3rem 0', textAlign: 'center'}}><Cta /></div>
+      </>
     ) : <div>not done yet</div>
   }
 
