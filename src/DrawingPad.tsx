@@ -71,14 +71,14 @@ export default function DrawingPad(props) {
   }, [])
 
   function clear() {
-    clearSynth.current.triggerAttackRelease("C3", "32n");
+    clearSynth.current.triggerAttackRelease("C3", "32n", Tone.now());
     clearSynth.current.frequency.rampTo("C7", "32n")
 
     setStrokes([]);
   }
 
   async function done() {
-    dotSynth.current.triggerAttackRelease(0.1)
+    dotSynth.current.triggerAttackRelease(0.1, Tone.now())
     const canvas = canvasRef.current;
     const base64image = canvas?.toDataURL();
     const response = await fetch(
@@ -100,6 +100,7 @@ export default function DrawingPad(props) {
   }
 
   function handlePointerDown(event) {
+
     if (!enabled) return;
     const canvas = canvasRef.current;
     const { top, left } = canvas?.getBoundingClientRect();
@@ -109,7 +110,7 @@ export default function DrawingPad(props) {
     setCurrentStroke([[localX, localY]]);
     setLastPoint([localX, localY])
     if (event.target === canvas) {
-      dotSynth.current.triggerAttackRelease(0.1)
+      dotSynth.current.triggerAttackRelease(0.1, Tone.now())
     }
   }
 
@@ -124,7 +125,7 @@ export default function DrawingPad(props) {
       const distance = dist(lastPoint, [localX, localY])
 
       if (distance > 2 && event.target === canvas) {
-        slideSynth.current.triggerAttackRelease(0.1)
+        slideSynth.current.triggerAttackRelease(0.1, Tone.now())
       }
 
       setLastPoint([localX, localY])
