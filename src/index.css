@@ -24,12 +24,16 @@ a:hover {
 
 body {
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
   -webkit-touch-callout: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0); /* mobile webkit */
+  background: #f3f4f6;
+  min-height: 100%
+}
+
+html {
+  height: 100%;
 }
 
 h1 {
@@ -48,6 +52,7 @@ button {
   color: #3f3f3f;
   cursor: pointer;
   transition: all 0.25s;
+  margin: 0;
 }
 
 button:hover {
@@ -73,7 +78,32 @@ button:focus-visible {
 
 input {
   border: 2px solid #eee;
-  border-radius: 8px
+  border-radius: 8px;
+  margin: 0;
+  box-shadow: none;
+  -webkit-appearance: none;
+}
+
+img {
+}
+
+.smooth-shadow {
+  /* http://smoothshadows.com/#djEsMSw1LDAuMDUsMTQ3LDYsNiwjMDMwNzEyLCNmM2Y0ZjYsI2ZhZmFmYSwx */
+box-shadow: 0px 0px 6px rgba(3, 7, 18, 0.01),
+  1px 1px 24px rgba(3, 7, 18, 0.02),
+  2px 2px 53px rgba(3, 7, 18, 0.03),
+  4px 4px 94px rgba(3, 7, 18, 0.04),
+  6px 6px 147px rgba(3, 7, 18, 0.05);
+}
+
+.drawing-pad {
+  padding: 2rem 0;
+}
+
+@media (min-width: 570px) {
+  .drawing-pad {
+    padding: 2rem;
+  }
 }
 
 .sp {

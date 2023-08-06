@@ -12,8 +12,8 @@ function CopyPrompt(props) {
   const [copied, setCopied] = useState(false);
 
   return (
-    <div style={{fontSize: '0.75rem', lineHeight: 1.3, maxWidth: props.width, margin: '0 auto', textAlign: 'left', textWrap: 'balance', position: 'relative'}}>
-      <div>Please send this to a friend to continue the drawing</div>
+    <div style={{fontSize: '0.75rem', lineHeight: 1.3, maxWidth: 280, margin: '0 auto', textAlign: 'left', textWrap: 'balance', position: 'relative'}}>
+      <div>Please send this URL to a friend to continue the drawing</div>
 
       <div style={{display: 'flex', width: '100%', padding: '0.25rem 0 1rem'}}>
         <input
