@@ -48,13 +48,18 @@ export default function Corpse(props) {
     return <button className='btn__primary' onClick={create}>Start new corpse</button>
   }
 
+  const imgStyle =  {
+    maxWidth: '100%',
+    display: 'block',
+  }
+
   function FullCorpse(props) {
     return game.gameState >= 3 ? (
       <>
         <div style={{width: '28vh', textAlign: 'center', margin: '0 auto'}}>
-          <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/head.png`} />
-          <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/body.png`} />
-          <img src={`${import.meta.env.VITE_SERVER_URL}img/${id}/feet.png`} />
+          <img style={imgStyle} src={`${import.meta.env.VITE_SERVER_URL}img/${id}/head.png`} />
+          <img style={imgStyle} src={`${import.meta.env.VITE_SERVER_URL}img/${id}/body.png`} />
+          <img style={imgStyle} src={`${import.meta.env.VITE_SERVER_URL}img/${id}/feet.png`} />
         </div>
         <div style={{padding: '3rem 0', textAlign: 'center'}}><Cta /></div>
       </>

@@ -20,6 +20,8 @@ function dist(pointA, pointB) {
 }
 
 export default function DrawingPad(props) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const drawingPadRef = useRef(null);
   const dotSynth = useRef(null)
   const slideSynth = useRef(null)
   const clearSynth = useRef(null)
@@ -35,7 +37,6 @@ export default function DrawingPad(props) {
   );
   const [enabled, setEnabled] = useState(true);
   const [currentStroke, setCurrentStroke] = useState<any[]>([]);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     dotSynth.current = new Tone.NoiseSynth({
@@ -103,28 +104,27 @@ export default function DrawingPad(props) {
 
     if (!enabled) return;
     const canvas = canvasRef.current;
-    const { top, left } = canvas?.getBoundingClientRect();
-    const localX = event.clientX - left;
-    const localY = event.clientY - top;
-    // setStrokes([ ...strokes, [localX, localY]])
+    const { top, left, width } = canvas?.getBoundingClientRect();
+    const ratio = props.width / width
+    const localX = (event.clientX - left) * ratio;
+    const localY = (event.clientY - top) * ratio;
     setCurrentStroke([[localX, localY]]);
-    setLastPoint([localX, localY])
-    if (event.target === canvas) {
-      dotSynth.current.triggerAttackRelease(0.1, Tone.now())
-    }
+    setLastPoint([localX*ratio, localY])
+    dotSynth.current.triggerAttackRelease(0.1, Tone.now())
   }
 
   function handlePointerMove(event) {
     if (!enabled) return;
     const canvas = canvasRef.current;
     if (currentStroke.length > 0) {
-      const { top, left } = canvas?.getBoundingClientRect();
-      const localX = event.clientX - left;
-      const localY = event.clientY - top;
+      const { top, left, width } = canvas?.getBoundingClientRect();
+      const ratio = props.width / width
+      const localX = (event.clientX - left) * ratio;
+      const localY = (event.clientY - top) * ratio;
       setCurrentStroke([...currentStroke, [localX, localY]]);
       const distance = dist(lastPoint, [localX, localY])
 
-      if (distance > 2 && event.target === canvas) {
+      if (distance > 1) {
         slideSynth.current.triggerAttackRelease(0.1, Tone.now())
       }
 
@@ -161,8 +161,8 @@ export default function DrawingPad(props) {
     if (canvas && ctx) {
       canvas.width = props.width * ratio;
       canvas.height = props.height * ratio;
-      canvas.style.width = props.width + "px";
-      canvas.style.height = props.height + "px";
+      //canvas.style.width = props.width + "px";
+      //canvas.style.height = props.height + "px";
       ctx.scale(ratio, ratio);
     }
   }, []);
@@ -213,34 +213,48 @@ export default function DrawingPad(props) {
   }, [strokes, currentStroke]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      window.addEventListener("pointerdown", handlePointerDown);
-      window.addEventListener("pointermove", handlePointerMove);
-      window.addEventListener("pointerup", handlePointerUp);
+    const drawingPad = drawingPadRef.current;
+
+    if (drawingPad) {
+      drawingPad.addEventListener("pointerdown", handlePointerDown);
+      drawingPad.addEventListener("pointermove", handlePointerMove);
+      drawingPad.addEventListener("pointerup", handlePointerUp);
 
       return () => {
-        window.removeEventListener("pointerdown", handlePointerDown);
-        window.removeEventListener("pointermove", handlePointerMove);
-        window.removeEventListener("pointerup", handlePointerUp);
+        drawingPad.removeEventListener("pointerdown", handlePointerDown);
+        drawingPad.removeEventListener("pointermove", handlePointerMove);
+        drawingPad.removeEventListener("pointerup", handlePointerUp);
       };
     }
   });
 
-  function PreviousSliver(props) {
+  function PreviousSlice(props) {
     return (
-      <img
-        style={{
-          width: props.width,
-          height: "50px",
-          objectFit: "cover",
-          objectPosition: "bottom",
-          pointerEvents: 'none',
-        }}
-        src={`${import.meta.env.VITE_SERVER_URL}img/${id}/${
-          parts[parts.indexOf(props.part) - 1]
-        }.png`}
-      />
+      <div style={{
+        width: '100%',
+        height: 0,
+        paddingBottom: '10%',
+        overflow: 'hidden',
+        pointerEvents: 'none',
+        margin: '0 auto',
+        position: 'relative',
+        background: '#fafafa',
+      }}>
+        <img
+          style={{
+            maxWidth: '100%',
+            margin: '0 auto',
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            //width: props.width*2,
+            //height: props.width*0.12,
+          }}
+          src={`${import.meta.env.VITE_SERVER_URL}img/${id}/${
+            parts[parts.indexOf(props.part) - 1]
+          }.png`}
+        />
+      </div>
     );
   }
 
@@ -257,16 +271,27 @@ export default function DrawingPad(props) {
   const isAfterFirstPart = partToState(part) > 0;
 
   return (
-    <div style={{touchAction: 'none', textAlign: 'center'}}>
-      <div style={{minHeight: 150, display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+    <div style={{textAlign: 'center'}}>
+      <div style={{padding: '2rem 0 0', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
       <CallToAction {...props} part={part} isThisPartOver={!isViewingPageForLatestState} />
       </div>
-      {isAfterFirstPart ? (
-        <PreviousSliver width={props.width} part={part} />
-      ) : null}
-      <canvas style={{ touchAction: "none", background: enabled ? '#eee' : 'white' }} ref={canvasRef}></canvas>
+      <div ref={drawingPadRef} style={{touchAction: 'none', maxWidth: props.width*2, margin: '0 auto',}} className='drawing-pad'>
+        <div className='smooth-shadow'>
+          {isAfterFirstPart && isViewingPageForLatestState ? (
+            <PreviousSlice part={part} width={props.width} />
+          ) : null}
+          <canvas style={{
+            touchAction: "none",
+            background: enabled ? '#fefefe' : 'transparent',
+            maxWidth: '100%',
+            display: 'block'
+          }}
+          ref={canvasRef}
+          ></canvas>
+        </div>
+      </div>
 
-      <div style={{minHeight: 100, display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+      <div style={{padding: '0 0 3rem',}}>
         <Controls
           part={part}
           game={props.game}
