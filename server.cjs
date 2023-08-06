@@ -7,6 +7,7 @@ const ba64 = require('ba64')
 const port = 3000;
 const { getGame, gameNextState, createGame } = require('./game-manager.cjs')
 const fs = require('fs')
+const im = require('imagemagick')
 
 app.use(cors())
 
@@ -41,9 +42,18 @@ app.post('/exquisite-corpse/api/new', (req, res) => {
 });
 
 app.post('/exquisite-corpse/api/:id', (req, res) => {
-  mkdirpSync(`corpses/${req.params.id}/`)
-  ba64.writeImageSync(`corpses/${req.params.id}/${req.body.part}`, req.body.base64image)
+  const location = `corpses/${req.params.id}/`
+  mkdirpSync(location)
+  ba64.writeImageSync(`${location}/${req.body.part}`, req.body.base64image)
   const game = gameNextState(req.params.id)
+
+  if (game.gameState >= 3) {
+    console.log('game finished. generating full.png')
+    im.convert([`${location}/head.png`, `${location}/body.png`, `${location}/feet.png`, '-append', `${location}/full.png`], (err, stdout) => {
+      if (err) throw err;
+    })
+  }
+
   res.json(game)
 });
 

@@ -3,8 +3,18 @@ import { useParams, useSearchParams } from "react-router-dom";
 import DrawingPad from "./DrawingPad.tsx";
 import { useNavigate } from "react-router-dom";
 
+const parts = ["head", "body", "feet"];
+
+function partToState(part: string | null): GameState {
+  if (part) {
+    return parts.indexOf(part);
+  }
+  return -1;
+}
+
 export default function Corpse(props) {
   const [game, setGame] = useState({});
+  const [continued, setContinued] = useState(false)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id } = useParams();
@@ -25,6 +35,12 @@ export default function Corpse(props) {
       .catch(e => setError('404: CORPSE NOT FOUND 💀'))
       .finally(() => setLoading(false))
   }, []);
+
+  useEffect(() => {
+   if (part && parts.indexOf(part) < 0) {
+    setError('ERROR: INVALID BODY PART')
+   }
+  }, [part]);
 
   function Cta(props) {
     const navigate = useNavigate()
@@ -53,28 +69,47 @@ export default function Corpse(props) {
     display: 'block',
   }
 
+  const intro = [
+    <>You must draw a head.</>,
+    <>A head has been drawn.<br/><strong>You will draw the body.</strong><br/>The next person will<br/>then draw the feet.</>,
+    <>A head and a body<br />have been drawn.<br/><strong>You will draw the feet.</strong></>,
+  ]
+
   function FullCorpse(props) {
     return game.gameState >= 3 ? (
       <>
         <div style={{width: '28vh', textAlign: 'center', margin: '0 auto'}}>
-          <img style={imgStyle} src={`${import.meta.env.VITE_SERVER_URL}img/${id}/head.png`} />
-          <img style={imgStyle} src={`${import.meta.env.VITE_SERVER_URL}img/${id}/body.png`} />
-          <img style={imgStyle} src={`${import.meta.env.VITE_SERVER_URL}img/${id}/feet.png`} />
+          <img style={imgStyle} src={`${import.meta.env.VITE_SERVER_URL}img/${id}/full.png`} />
         </div>
-        <div style={{padding: '3rem 0', textAlign: 'center'}}><Cta /></div>
+        <div style={{padding: '0 0 3rem', textAlign: 'center'}}><Cta /></div>
       </>
-    ) : <div>not done yet</div>
+    ) : <div>The finished corpse will be here when it is finished. Please refresh the page.</div>
+  }
+
+  function Intro(props) {
+    return (
+    <div style={{ height: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    <div>{intro[props.viewingState]}</div>
+    <div style={{margin: '2rem 0 0'}}><button className='btn__primary' onClick={() => setContinued(true)}>I understand</button></div>
+    </div>
+    )
   }
 
   function View(props) {
     if (error) return (
-        <div style={{ height: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{error}</div>
-        )
-    return part ? (
-      <DrawingPad {...props} game={game} setGame={setGame} />
-    ) : (
-      <FullCorpse />
-    );
+      <div style={{ height: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>{error}</div>
+    )
+    if (!part) {
+      return <FullCorpse />
+    }
+
+    const viewingState = partToState(part)
+
+    if (viewingState > 0 && !continued) {
+      return <Intro viewingState={viewingState} />
+    }
+
+    return <DrawingPad {...props} game={game} setGame={setGame} />
   }
 
   function Loader(props) {

@@ -72,14 +72,17 @@ export default function DrawingPad(props) {
   }, [])
 
   function clear() {
-    clearSynth.current.triggerAttackRelease("C3", "32n", Tone.now());
-    clearSynth.current.frequency.rampTo("C7", "32n")
+    try {
+      clearSynth.current.triggerAttackRelease("C3", "32n", Tone.now());
+      clearSynth.current.frequency.rampTo("C7", "32n")
+    } catch(e) {
+      console.error(e)
+    }
 
     setStrokes([]);
   }
 
   async function done() {
-    dotSynth.current.triggerAttackRelease(0.1, Tone.now())
     const canvas = canvasRef.current;
     const base64image = canvas?.toDataURL();
     const response = await fetch(
@@ -110,7 +113,11 @@ export default function DrawingPad(props) {
     const localY = (event.clientY - top) * ratio;
     setCurrentStroke([[localX, localY]]);
     setLastPoint([localX*ratio, localY])
-    dotSynth.current.triggerAttackRelease(0.1, Tone.now())
+    try {
+      dotSynth.current.triggerAttackRelease(0.1, Tone.now())
+    } catch(e) {
+      console.error(e)
+    }
   }
 
   function handlePointerMove(event) {
@@ -125,7 +132,11 @@ export default function DrawingPad(props) {
       const distance = dist(lastPoint, [localX, localY])
 
       if (distance > 1) {
-        slideSynth.current.triggerAttackRelease(0.1, Tone.now())
+        try {
+          slideSynth.current.triggerAttackRelease(0.1, Tone.now())
+        } catch(e) {
+          console.error(e)
+        }
       }
 
       setLastPoint([localX, localY])
