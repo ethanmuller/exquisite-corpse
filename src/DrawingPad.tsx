@@ -63,9 +63,9 @@ export default function DrawingPad(props) {
       },
       envelope: {
         attack: 0.001,
-        decay: 0.2,
+        decay: 0.02,
         sustain: 0,
-        release: 0.02,
+        release: 0.01,
       },
       volume: -12,
     }).toDestination()
@@ -80,6 +80,17 @@ export default function DrawingPad(props) {
     }
 
     setStrokes([]);
+  }
+
+  function undo() {
+    try {
+      clearSynth.current.triggerAttackRelease("C4", "32n", Tone.now());
+      clearSynth.current.frequency.rampTo("C7", 0.01)
+    } catch(e) {
+      console.error(e)
+    }
+
+    setStrokes(strokes.slice(0,-1));
   }
 
   async function done() {
@@ -309,6 +320,8 @@ export default function DrawingPad(props) {
           isThisPartOver={!isViewingPageForLatestState}
           onDone={done}
           onClear={clear}
+          onUndo={undo}
+          strokes={strokes}
         />
       </div>
     </div>

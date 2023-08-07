@@ -116,3 +116,9 @@ ul, ol {
 }
 li a {
 }
+
+[disabled] {
+  opacity: 0.3;
+  background: #ccc !important;
+  color: #777 !important;
+}
